@@ -106,6 +106,22 @@ and would work correctly).
    backend by default. There is no way to force SecureTransport selection
    via environment variables.
 
+## Intermittency Note
+
+The TLS 1.3 connection reset was consistently reproducible for ~8 hours on
+2026-04-03 (18:00–02:00 CEST), then stopped reproducing around 2026-04-04
+10:00 CEST. At that point:
+
+- The app's bundled curl backend (OpenSSL 3.6.0) could connect directly
+- Python with OpenSSL 3.6.1 could also connect
+- The server IP remained 35.201.126.131
+
+This suggests the GCP load balancer frontend was rotated or reconfigured.
+The issue may recur when the same frontend configuration is deployed again.
+
+The proof scripts in `prove_tls_bug.sh` and `prove_tls_bug.py` can be
+re-run to check if the issue is currently active.
+
 ## Suggested Fixes
 
 1. **Immediate**: Pin TLS to 1.2 for the discovery endpoint, or configure
